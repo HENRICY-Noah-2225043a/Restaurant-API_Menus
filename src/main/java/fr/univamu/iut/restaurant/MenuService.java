@@ -7,6 +7,13 @@ import jakarta.json.bind.JsonbBuilder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Classe utilisée pour récupérer les informations nécessaires à la ressource
  * (permet de dissocier ressource et mode d'accès aux données)
@@ -96,5 +103,28 @@ public class MenuService {
      */
     public boolean createMenu(Menu menu) {
         return menuRepo.createMenu(menu);
+    }
+
+    public Plat getPlat(int idPlat) throws Exception {
+        String url = "VOTRE_URL_API_PLATS" + idPlat;
+
+        HttpClient client = HttpClients.createDefault(); // Correction: utiliser HttpClients.createDefault()
+        try {
+            HttpGet requete = new HttpGet(url);
+            HttpResponse reponse = null; // Initialize the variable
+            reponse = client.execute(requete); // Use the initialized variable
+
+            if (reponse.getStatusLine().getStatusCode() == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                Plat plat = mapper.readValue(reponse.getEntity().getContent(), Plat.class); // Correction: TypeReference
+                                                                                            // -> Plat.class
+                return plat; // Retourner le plat récupéré
+            } else {
+                throw new Exception(
+                        "Erreur lors de la récupération du plat de l'API : " + reponse.getStatusLine().getStatusCode());
+            }
+        } catch (Exception e) {
+            throw new Exception("Erreur lors de la récupération du plat de l'API : " + e.getMessage());
+        }
     }
 }

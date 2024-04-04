@@ -3,6 +3,13 @@ package fr.univamu.iut.restaurant;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+
 public class Menu {
 
     int id;
@@ -10,24 +17,33 @@ public class Menu {
     String description;
     Date creation_date;
     double prix;
-    List<Integer> plats;
+    Plat entree;
+    Plat plat;
+    Plat dessert;
 
-    public Menu(String author, String description, double prix, Date creation_date) {
+    public Menu(String author, String description, Date creation_date) {
 
         this.author = author;
         this.description = description;
         this.creation_date = creation_date;
-        this.plats = getPlats();
 
     }
 
-    public Menu(int id, String author, String description, double prix, Date creation_date) {
+    public Menu(int id, String author, String description, double prix, Date creation_date, int entree, int plat,
+            int dessert) {
         this.id = id;
         this.author = author;
         this.description = description;
         this.creation_date = creation_date;
-        this.prix = prix;
-        this.plats = getPlats();
+        try {
+            this.entree = getPlat(entree);
+            this.plat = getPlat(plat);
+            this.dessert = getPlat(dessert);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.prix = this.entree.getPrix() + this.plat.getPrix() + this.dessert.getPrix();
+
     }
 
     public int getId() {
@@ -50,15 +66,6 @@ public class Menu {
         return creation_date;
     }
 
-    public List<Integer> getPlats() {
-        // requete pour récuperer l'id des plats dans la table menu_plat de la base de
-        // données des plats
-        // je vais recevoir une string que je vais split pour avoir une liste de plats
-
-        String stringPlat = /* requete ici */ null;
-
-    }
-
     public void setCreation_date(Date localTime) {
         this.creation_date = localTime;
     }
@@ -77,6 +84,39 @@ public class Menu {
 
     public void setPrix(double prix) {
         this.prix = prix;
+    }
+
+    public void setEntree(Plat entree) {
+        this.entree = entree;
+    }
+
+    public void setPlat(Plat plat) {
+        this.plat = plat;
+    }
+
+    public void setDessert(Plat dessert) {
+        this.dessert = dessert;
+    }
+
+    public Plat getPlat(int id) throws Exception {
+        HttpClient client = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:8080/restaurant/api/plat/" + id);
+        HttpResponse response = client.execute(request);
+        ObjectMapper mapper = new ObjectMapper();
+        Plat plat = mapper.readValue(response.getEntity().getContent(), Plat.class);
+        return plat;
+    }
+
+    public Plat getEntree() {
+        return entree;
+    }
+
+    public Plat getPlat() {
+        return plat;
+    }
+
+    public Plat getDessert() {
+        return dessert;
     }
 
     @Override

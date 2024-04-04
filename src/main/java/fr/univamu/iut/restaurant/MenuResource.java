@@ -117,18 +117,40 @@ public class MenuResource {
      *             objet Menu
      * @return une réponse "created" si la création a été effectuée, une erreur
      *         NotFound sinon
+     * @throws Exception
      */
+
     @POST
     @Path("/create")
     @Consumes("application/json")
-    public Response createMenu(String nom, String description, double prix, Date creation_date) {
 
-        // si le Menu n'a pas été trouvé
-        Menu menu = new Menu(nom, description, prix, creation_date);
-        if (!service.createMenu(menu))
+    public Response createMenu(
+            @PathParam("nom") String nom,
+            @PathParam("description") String description,
+            @PathParam("date_creation") Date creation_date,
+            @PathParam("entree") int idEntree,
+            @PathParam("plat") int idPlat,
+            @PathParam("dessert") int idDessert) throws Exception {
+
+        // On crée un nouveau menu à partir des paramètres
+        Menu menu = new Menu(nom, description, creation_date);
+
+        // On récupère les plats à partir des IDs
+        Plat platEntree = service.getPlat(idEntree);
+        Plat platPrincipal = service.getPlat(idPlat);
+        Plat platDessert = service.getPlat(idDessert);
+
+        // On les ajoute au menu
+        menu.setEntree(platEntree);
+        menu.setPlat(platPrincipal);
+        menu.setDessert(platDessert);
+
+        // On crée le menu en base de données
+        if (!service.createMenu(menu)) {
             throw new NotFoundException();
-        else
+        } else {
             return Response.ok("created").build();
+        }
     }
 
 }
