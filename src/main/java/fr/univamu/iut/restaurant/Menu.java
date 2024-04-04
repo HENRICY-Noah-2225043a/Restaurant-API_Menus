@@ -1,7 +1,6 @@
 package fr.univamu.iut.restaurant;
 
 import java.util.Date;
-import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,6 +40,12 @@ public class Menu {
             this.dessert = getPlat(dessert);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (this.entree == null || this.plat == null || this.dessert == null) {
+            this.entree = new Plat(1, "salade", "une ptite salade", 5, "entrée");
+            this.plat = new Plat(2, "steak", "un steak", 10, "plat principal");
+            this.dessert = new Plat(3, "glace", "une glace", 3, "dessert");
         }
         this.prix = this.entree.getPrix() + this.plat.getPrix() + this.dessert.getPrix();
 
