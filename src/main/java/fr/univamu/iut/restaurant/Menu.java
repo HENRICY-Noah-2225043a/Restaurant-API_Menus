@@ -10,13 +10,24 @@ public class Menu {
     String description;
     Date creation_date;
     double prix;
+    List<Integer> plats;
 
-    public Menu(int id, String author, String description, double prix) {
+    public Menu(String author, String description, double prix, Date creation_date) {
 
         this.author = author;
         this.description = description;
+        this.creation_date = creation_date;
+        this.plats = getPlats();
+
+    }
+
+    public Menu(int id, String author, String description, double prix, Date creation_date) {
+        this.id = id;
+        this.author = author;
+        this.description = description;
+        this.creation_date = creation_date;
         this.prix = prix;
-        this.creation_date = new Date();
+        this.plats = getPlats();
     }
 
     public int getId() {
@@ -39,18 +50,12 @@ public class Menu {
         return creation_date;
     }
 
-    public List<String> getPlats() {
+    public List<Integer> getPlats() {
         // requete pour récuperer l'id des plats dans la table menu_plat de la base de
         // données des plats
         // je vais recevoir une string que je vais split pour avoir une liste de plats
 
         String stringPlat = /* requete ici */ null;
-
-        if (stringPlat != null) {
-            return List.of(stringPlat.split(","));
-        } else {
-            return null;
-        }
 
     }
 

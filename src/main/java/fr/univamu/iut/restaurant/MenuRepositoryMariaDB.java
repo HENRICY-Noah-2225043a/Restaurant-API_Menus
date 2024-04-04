@@ -1,9 +1,11 @@
 package fr.univamu.iut.restaurant;
 
 import java.io.Closeable;
+import java.net.http.HttpResponse;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MenuRepositoryMariaDB implements MenuRepositoryInterface, Closeable {
 
@@ -37,12 +39,14 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface, Closeable
             ResultSet result = ps.executeQuery();
 
             if (result.next()) {
+                int idMenu = result.getInt("id");
                 String description = result.getString("description");
                 String author = result.getString("author");
                 double prix = result.getDouble("prix");
+                Date creation_date = result.getDate("creation_date");
+                List<Integer> plats = getPlats(idMenu);
+                selectedMenu = new Menu(idMenu, author, description, prix, creation_date);
 
-                selectedMenu = new Menu(id, author, description, prix);
-                selectedMenu.setCreation_date(new Date());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -50,11 +54,39 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface, Closeable
         return selectedMenu;
     }
 
+    private List<Plats> getPlats(int idMenu) throws Exception {
+        // Replace "YOUR_DISHES_API_URL" with the actual URL of your dishes API
+        String urlString = "YOUR_DISHES_API_URL" + idMenu;
+
+        // Use a library like Apache HttpComponents or OkHttp to make the API call
+        // This example uses HttpComponents (you'll need to add the dependency)
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        try {
+            HttpGet request = new HttpGet(urlString);
+            HttpResponse response = httpClient.execute(request);
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+                // Parse the response body to get the list of dishes (implementation depends on
+                // API format)
+                // This example assumes JSON response and uses Jackson library (add dependency)
+                ObjectMapper mapper = new ObjectMapper();
+                List<Dish> dishes = mapper.readValue(response.getEntity().getContent(),
+                        new TypeReference<List<Dish>>() {
+                        });
+                return dishes;
+            } else {
+                throw new Exception("Error retrieving dishes from API: " + response.getStatusLine().getStatusCode());
+            }
+        } finally {
+            httpClient.close();
+        }
+    }
+
     @Override
     public ArrayList<Menu> getAllMenu() {
         ArrayList<Menu> listMenu;
 
-        String query = "SELECT * FROM Menu";
+        String query = "SELECT * FROM menu";
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ResultSet result = ps.executeQuery();
@@ -62,13 +94,8 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface, Closeable
             listMenu = new ArrayList<>();
 
             while (result.next()) {
-                int id = result.getInt("id");
-                String author = result.getString("author");
-                String description = result.getString("description");
-                double prix = result.getInt("prix");
-
-                Menu currentMenu = new Menu(id, author, description, prix);
-                currentMenu.setCreation_date(new Date());
+                Menu currentMenu = new Menu(result.getInt("id"), result.getString("author"),
+                        result.getString("description"), result.getDouble("prix"), result.getDate("creation_date"));
 
                 listMenu.add(currentMenu);
             }

@@ -2,13 +2,13 @@
   <security-configurations>
     <authentication-service default="true" name="adminAuth" use-password-credential="true">
       <security-provider provider-name="adminSpc" name="spcrealm" type="LoginModule">
-        <login-module-config control-flag="sufficient" module-class="com.sun.enterprise.admin.util.AdminLoginModule" name="adminSpecialLM">
+        <login-module-config module-class="com.sun.enterprise.admin.util.AdminLoginModule" control-flag="sufficient" name="adminSpecialLM">
           <property name="config" value="server-config"></property>
           <property name="auth-realm" value="admin-realm"></property>
         </login-module-config>
       </security-provider>
       <security-provider provider-name="adminFile" name="filerealm" type="LoginModule">
-        <login-module-config control-flag="sufficient" module-class="com.sun.enterprise.security.auth.login.FileLoginModule" name="adminFileLM">
+        <login-module-config module-class="com.sun.enterprise.security.auth.login.FileLoginModule" control-flag="sufficient" name="adminFileLM">
           <property name="config" value="server-config"></property>
           <property name="auth-realm" value="admin-realm"></property>
         </login-module-config>
@@ -22,7 +22,7 @@
   </security-configurations>
   <managed-job-config></managed-job-config>
   <system-applications>
-    <application context-root="" object-type="system-admin" directory-deployed="true" name="__admingui" location="${com.sun.aas.installRootURI}/lib/install/applications/__admingui">
+    <application context-root="" object-type="system-admin" name="__admingui" directory-deployed="true" location="${com.sun.aas.installRootURI}/lib/install/applications/__admingui">
       <module name="__admingui">
         <engine sniffer="web"></engine>
         <engine sniffer="weld"></engine>
@@ -54,7 +54,6 @@
     <server config-ref="server-config" name="server">
       <application-ref ref="__admingui" virtual-servers="__asadmin"></application-ref>
       <application-ref ref="book-1.0-SNAPSHOT" virtual-servers="server"></application-ref>
-      <application-ref ref="Restaurant_API_Menus-1.0-SNAPSHOT" virtual-servers="server"></application-ref>
       <resource-ref ref="jdbc/__TimerPool"></resource-ref>
       <resource-ref ref="jdbc/__default"></resource-ref>
       <resource-ref ref="concurrent/__defaultContextService"></resource-ref>
@@ -240,7 +239,7 @@
         </transports>
       </network-config>
       <thread-pools>
-        <thread-pool name="admin-thread-pool" max-thread-pool-size="50" max-queue-size="256"></thread-pool>
+        <thread-pool name="admin-thread-pool" max-queue-size="256" max-thread-pool-size="50"></thread-pool>
         <thread-pool name="http-thread-pool"></thread-pool>
         <thread-pool name="thread-pool-1" max-thread-pool-size="200"></thread-pool>
       </thread-pools>
@@ -437,7 +436,7 @@
       <thread-pools>
         <thread-pool name="http-thread-pool"></thread-pool>
         <thread-pool name="thread-pool-1" max-thread-pool-size="200"></thread-pool>
-        <thread-pool name="admin-thread-pool" max-queue-size="256" max-thread-pool-size="50"></thread-pool>
+        <thread-pool name="admin-thread-pool" max-thread-pool-size="50" max-queue-size="256"></thread-pool>
       </thread-pools>
       <group-management-service>
         <failure-detection></failure-detection>
@@ -463,24 +462,11 @@
   </secure-admin>
   <clusters></clusters>
   <applications>
-    <application context-root="/book-1.0-SNAPSHOT" object-type="user" directory-deployed="true" name="book-1.0-SNAPSHOT" location="file:/amuhome/a22009311/IdeaProjects/book/target/book-1.0-SNAPSHOT/">
+    <application context-root="/book-1.0-SNAPSHOT" object-type="user" name="book-1.0-SNAPSHOT" directory-deployed="true" location="file:/amuhome/a22009311/IdeaProjects/book/target/book-1.0-SNAPSHOT/">
       <property name="archiveType" value="war"></property>
       <property name="defaultAppName" value="book-1.0-SNAPSHOT"></property>
       <property name="appLocation" value="file:/amuhome/a22009311/IdeaProjects/book/target/book-1.0-SNAPSHOT/"></property>
       <module name="book-1.0-SNAPSHOT">
-        <engine sniffer="weld"></engine>
-        <engine sniffer="jpa"></engine>
-        <engine sniffer="security"></engine>
-        <engine sniffer="web"></engine>
-      </module>
-    </application>
-    <application context-root="/Restaurant_API_Menus-110800566146649880807.0-SNAPSHOT" object-type="user" name="Restaurant_API_Menus-1.0-SNAPSHOT" location="${com.sun.aas.instanceRootURI}/applications/Restaurant_API_Menus-1.0-SNAPSHOT/">
-      <property name="archiveType" value="war"></property>
-      <property name="preserveAppScopedResources" value="false"></property>
-      <property name="defaultAppName" value="Restaurant_API_Menus-110800566146649880807.0-SNAPSHOT"></property>
-      <property name="appLocation" value="${com.sun.aas.instanceRootURI}/applications/__internal/Restaurant_API_Menus-1.0-SNAPSHOT/Restaurant_API_Menus-110800566146649880807.0-SNAPSHOT.war"></property>
-      <property name="implicitCdiEnabled" value="true"></property>
-      <module name="Restaurant_API_Menus-1.0-SNAPSHOT">
         <engine sniffer="weld"></engine>
         <engine sniffer="jpa"></engine>
         <engine sniffer="security"></engine>

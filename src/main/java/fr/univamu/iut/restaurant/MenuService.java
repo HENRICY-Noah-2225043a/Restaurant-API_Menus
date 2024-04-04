@@ -87,4 +87,14 @@ public class MenuService {
     public boolean updateMenu(int id, Menu menu) {
         return menuRepo.updateMenu(id, menu.getAuthor(), menu.getDescription(), menu.getPrix());
     }
+
+    /**
+     * Méthode permettant de créer un menu
+     *
+     * @param menu les informations du menu à créer
+     * @return true si le menu a pu être créé
+     */
+    public boolean createMenu(Menu menu) {
+        return menuRepo.createMenu(menu);
+    }
 }

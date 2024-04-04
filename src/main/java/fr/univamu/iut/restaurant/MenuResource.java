@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.Response;
 import fr.univamu.iut.restaurant.MenuService;
 import fr.univamu.iut.restaurant.MenuRepositoryInterface;
 
+import java.sql.Date;
 import java.sql.SQLException;
 
 /**
@@ -83,7 +84,6 @@ public class MenuResource {
     @Produces("application/json")
     public String getTest() {
 
-
         return "test";
     }
 
@@ -99,7 +99,7 @@ public class MenuResource {
      *         NotFound sinon
      */
     @PUT
-    @Path("{id}")
+    @Path("/update/{id}")
     @Consumes("application/json")
     public Response updateMenu(@PathParam("id") int id, Menu menu) {
 
@@ -109,4 +109,26 @@ public class MenuResource {
         else
             return Response.ok("updated").build();
     }
+
+    /**
+     * Endpoint permettant de créer un Menu
+     * 
+     * @param menu le menu transmis en HTTP au format JSON et convertit en
+     *             objet Menu
+     * @return une réponse "created" si la création a été effectuée, une erreur
+     *         NotFound sinon
+     */
+    @POST
+    @Path("/create")
+    @Consumes("application/json")
+    public Response createMenu(String nom, String description, double prix, Date creation_date) {
+
+        // si le Menu n'a pas été trouvé
+        Menu menu = new Menu(nom, description, prix, creation_date);
+        if (!service.createMenu(menu))
+            throw new NotFoundException();
+        else
+            return Response.ok("created").build();
+    }
+
 }

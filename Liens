@@ -1,0 +1,4 @@
+Context root se trouve dans php my admin dans la page d'administration de l'application une fois déployée
+
+getAllMenu = localhost:8080/"context root"/api/menus
+getMenu = localhost:8080/"context root"/api/menus/"idMenu"
