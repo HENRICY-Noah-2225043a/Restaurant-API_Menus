@@ -38,16 +38,12 @@ public class Menu {
             this.entree = getPlat(entree);
             this.plat = getPlat(plat);
             this.dessert = getPlat(dessert);
+
+            this.prix = this.entree.getPrix() + this.plat.getPrix() + this.dessert.getPrix();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if (this.entree == null || this.plat == null || this.dessert == null) {
-            this.entree = new Plat(1, "salade", "une ptite salade", 5, "entrée");
-            this.plat = new Plat(2, "steak", "un steak", 10, "plat principal");
-            this.dessert = new Plat(3, "glace", "une glace", 3, "dessert");
-        }
-        this.prix = this.entree.getPrix() + this.plat.getPrix() + this.dessert.getPrix();
 
     }
 
@@ -105,11 +101,22 @@ public class Menu {
 
     public Plat getPlat(int id) throws Exception {
         HttpClient client = HttpClients.createDefault();
-        HttpGet request = new HttpGet("http://localhost:8080/restaurant/api/plat/" + id);
+        HttpGet request = new HttpGet(
+                "http://localhost:8080/Restaurant_API_Plats-110658575666960537751.0-SNAPSHOT/api/plats/" + id);
+        request.addHeader("Accept", "application/json");
         HttpResponse response = client.execute(request);
         ObjectMapper mapper = new ObjectMapper();
         Plat plat = mapper.readValue(response.getEntity().getContent(), Plat.class);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception(
+                    "Erreur lors de la récupération du plat de l'API : " + response.getStatusLine().getStatusCode());
+        }
+        if (plat == null) {
+            throw new Exception("Erreur lors de la récupération du plat de l'API : plat null");
+        }
+        System.out.println(plat);
         return plat;
+
     }
 
     public Plat getEntree() {
@@ -127,7 +134,8 @@ public class Menu {
     @Override
     public String toString() {
         return "Menu{" + "id=" + id + ", author='" + author + '\'' + ", description='" + description + '\''
-                + ", creation_date=" + creation_date + ", prix=" + prix + '}';
+                + ", creation_date=" + creation_date + ", prix=" + prix + ", entree=" + entree + ", plat=" + plat
+                + ", dessert=" + dessert + '}';
     }
 
 }

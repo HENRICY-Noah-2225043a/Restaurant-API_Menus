@@ -1,18 +1,17 @@
 package fr.univamu.iut.restaurant;
 
-import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe utilisée pour récupérer les informations nécessaires à la ressource
@@ -105,26 +104,27 @@ public class MenuService {
         return menuRepo.createMenu(menu);
     }
 
-    public Plat getPlat(int idPlat) throws Exception {
-        String url = "VOTRE_URL_API_PLATS" + idPlat;
-
-        HttpClient client = HttpClients.createDefault(); // Correction: utiliser HttpClients.createDefault()
-        try {
-            HttpGet requete = new HttpGet(url);
-            HttpResponse reponse = null; // Initialize the variable
-            reponse = client.execute(requete); // Use the initialized variable
-
-            if (reponse.getStatusLine().getStatusCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                Plat plat = mapper.readValue(reponse.getEntity().getContent(), Plat.class); // Correction: TypeReference
-                                                                                            // -> Plat.class
-                return plat; // Retourner le plat récupéré
-            } else {
-                throw new Exception(
-                        "Erreur lors de la récupération du plat de l'API : " + reponse.getStatusLine().getStatusCode());
-            }
-        } catch (Exception e) {
-            throw new Exception("Erreur lors de la récupération du plat de l'API : " + e.getMessage());
+    public Plat getPlat(int id) throws Exception {
+        HttpClient client = HttpClients.createDefault();
+        HttpGet request = new HttpGet(
+                "http://localhost:8080/Restaurant_API_Plats-110658575666960537751.0-SNAPSHOT/api/plats/" + id);
+        request.addHeader("Accept", "application/json");
+        HttpResponse response = client.execute(request);
+        ObjectMapper mapper = new ObjectMapper();
+        Plat plat = mapper.readValue(response.getEntity().getContent(), Plat.class);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception(
+                    "Erreur lors de la récupération du plat de l'API : " + response.getStatusLine().getStatusCode());
         }
+        if (plat == null) {
+            throw new Exception("Erreur lors de la récupération du plat de l'API : plat null");
+        }
+        System.out.println(plat);
+        return plat;
+
+    }
+
+    public boolean deleteMenu(int id) {
+        return menuRepo.deleteMenu(id);
     }
 }

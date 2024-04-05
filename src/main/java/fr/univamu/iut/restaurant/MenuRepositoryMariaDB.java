@@ -3,14 +3,6 @@ package fr.univamu.iut.restaurant;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 
 public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
 
@@ -129,41 +121,21 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
 
     public boolean createMenu(Menu menu) {
 
-        String query = "INSERT INTO Menu (author, description, prix,) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Menu (author, description, entree, plat, dessert) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, menu.getAuthor());
             ps.setString(2, menu.getDescription());
-            ps.setDouble(3, menu.getPrix());
+            ps.setInt(3, menu.getEntree().id);
+            ps.setInt(4, menu.getPlat().id);
+            ps.setInt(5, menu.getDessert().id);
 
             int result = ps.executeUpdate();
 
             return result == 1;
         } catch (SQLException e) {
+            System.out.println("Erreur lors de la création du menu" + e.getMessage());
             throw new RuntimeException(e);
-        }
-    }
-
-    public Plat getPlat(int idPlat) throws Exception {
-        String url = "VOTRE_URL_API_PLATS" + idPlat;
-
-        HttpClient client = HttpClients.createDefault(); // Correction: utiliser HttpClients.createDefault()
-        try {
-            HttpGet requete = new HttpGet(url);
-            HttpResponse reponse = null; // Initialize the variable
-            reponse = client.execute(requete); // Use the initialized variable
-
-            if (reponse.getStatusLine().getStatusCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                Plat plat = mapper.readValue(reponse.getEntity().getContent(), Plat.class); // Correction: TypeReference
-                                                                                            // -> Plat.class
-                return plat; // Retourner le plat récupéré
-            } else {
-                throw new Exception(
-                        "Erreur lors de la récupération du plat de l'API : " + reponse.getStatusLine().getStatusCode());
-            }
-        } catch (Exception e) {
-            throw new Exception("Erreur lors de la récupération du plat de l'API : " + e.getMessage());
         }
     }
 

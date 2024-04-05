@@ -1,12 +1,8 @@
 package fr.univamu.iut.restaurant;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
-
-import fr.univamu.iut.restaurant.MenuService;
-import fr.univamu.iut.restaurant.MenuRepositoryInterface;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -135,15 +131,15 @@ public class MenuResource {
         // On crée un nouveau menu à partir des paramètres
         Menu menu = new Menu(nom, description, creation_date);
 
-        // On récupère les plats à partir des IDs
-        Plat platEntree = service.getPlat(idEntree);
-        Plat platPrincipal = service.getPlat(idPlat);
-        Plat platDessert = service.getPlat(idDessert);
+        // On récupère les plats associés au menu
+        Plat entree = service.getPlat(idEntree);
+        Plat plat = service.getPlat(idPlat);
+        Plat dessert = service.getPlat(idDessert);
 
-        // On les ajoute au menu
-        menu.setEntree(platEntree);
-        menu.setPlat(platPrincipal);
-        menu.setDessert(platDessert);
+        // On associe les plats au menu
+        menu.setEntree(entree);
+        menu.setPlat(plat);
+        menu.setDessert(dessert);
 
         // On crée le menu en base de données
         if (!service.createMenu(menu)) {
@@ -151,6 +147,24 @@ public class MenuResource {
         } else {
             return Response.ok("created").build();
         }
+    }
+
+    /**
+     * Endpoint permettant de supprimer un Menu
+     * 
+     * @param id id du Menu à supprimer
+     * @return une réponse "deleted" si la suppression a été effectuée, une erreur
+     *         NotFound sinon
+     */
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteMenu(@PathParam("id") int id) {
+
+        // si le Menu n'a pas été trouvé
+        if (!service.deleteMenu(id))
+            throw new NotFoundException();
+        else
+            return Response.ok("deleted").build();
     }
 
 }
