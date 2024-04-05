@@ -54,12 +54,14 @@ public class MenuService {
         return result;
     }
 
-    /*
-     * Méthode retournant au format JSON les informations sur un menu recherché
+    /**
+     * Méthode permettant de récupérer les informations d'un menu
      *
-     * @param id id du menu recherché
-     * 
-     * @return une chaîne de caractère contenant les informations au format JSON
+     * @param id l'identifiant du menu à récupérer
+     * @return les informations du menu au format JSON
+     * @throws SQLException           si une erreur SQL survient lors de la
+     *                                récupération
+     * @throws ClassNotFoundException si la classe du pilote JDBC n'est pas trouvée
      */
 
     public String getMenuJSON(int id) throws SQLException, ClassNotFoundException {

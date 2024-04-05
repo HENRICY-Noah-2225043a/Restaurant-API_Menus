@@ -74,6 +74,11 @@ public class MenuResource {
         return result;
     }
 
+    /**
+     * Endpoint permettant de publier un message de test
+     * 
+     * @return un message de test
+     */
     @GET
     @Path("/test")
     @Produces("application/json")
@@ -107,13 +112,16 @@ public class MenuResource {
     /**
      * Endpoint permettant de créer un Menu
      * 
-     * @param menu le menu transmis en HTTP au format JSON et convertit en
-     *             objet Menu
+     * @param nom           nom du Menu
+     * @param description   description du Menu
+     * @param creation_date date de création du Menu
+     * @param idEntree      id de l'entrée du Menu
+     * @param idPlat        id du plat principal du Menu
+     * @param idDessert     id du dessert du Menu
      * @return une réponse "created" si la création a été effectuée, une erreur
      *         NotFound sinon
-     * @throws Exception
+     * @throws Exception si une erreur survient lors de la récupération des plats
      */
-
     @POST
     @Path("/create")
     @Consumes("application/json")

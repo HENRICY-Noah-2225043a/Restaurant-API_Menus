@@ -65,6 +65,8 @@ public class Menu {
         }
     }
 
+    // Getters et Setters
+
     /**
      * Méthode pour obtenir l'identifiant du menu.
      * 
@@ -208,6 +210,8 @@ public class Menu {
     public Plat getDessert() {
         return dessert;
     }
+
+    // Autres méthodes
 
     /**
      * Méthode pour récupérer un plat à partir de son identifiant.
