@@ -68,7 +68,6 @@ public class MenuResource {
 
         String result = service.getMenuJSON(id);
 
-        // si le Menu n'a pas été trouvé
         if (result == null)
             throw new NotFoundException();
 
@@ -99,7 +98,6 @@ public class MenuResource {
     @Consumes("application/json")
     public Response updateMenu(@PathParam("id") int id, Menu menu) {
 
-        // si le Menu n'a pas été trouvé
         if (!service.updateMenu(id, menu))
             throw new NotFoundException();
         else
@@ -128,20 +126,16 @@ public class MenuResource {
             @PathParam("plat") int idPlat,
             @PathParam("dessert") int idDessert) throws Exception {
 
-        // On crée un nouveau menu à partir des paramètres
         Menu menu = new Menu(nom, description, creation_date);
 
-        // On récupère les plats associés au menu
         Plat entree = service.getPlat(idEntree);
         Plat plat = service.getPlat(idPlat);
         Plat dessert = service.getPlat(idDessert);
 
-        // On associe les plats au menu
         menu.setEntree(entree);
         menu.setPlat(plat);
         menu.setDessert(dessert);
 
-        // On crée le menu en base de données
         if (!service.createMenu(menu)) {
             throw new NotFoundException();
         } else {
