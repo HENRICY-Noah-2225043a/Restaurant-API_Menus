@@ -4,16 +4,35 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Classe implémentant l'interface MenuRepositoryInterface pour accéder aux
+ * données des menus depuis une base de données MariaDB.
+ */
 public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
 
     protected Connection dbConnection;
 
+    /**
+     * Constructeur de la classe MenuRepositoryMariaDB.
+     * 
+     * @param infoConnection Les informations de connexion à la base de données (URL
+     *                       de connexion).
+     * @param user           Le nom d'utilisateur pour la connexion à la base de
+     *                       données.
+     * @param pwd            Le mot de passe pour la connexion à la base de données.
+     * @throws SQLException           Si une erreur SQL survient lors de la
+     *                                connexion.
+     * @throws ClassNotFoundException Si la classe du pilote JDBC n'est pas trouvée.
+     */
     public MenuRepositoryMariaDB(String infoConnection, String user, String pwd)
             throws java.sql.SQLException, java.lang.ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         dbConnection = DriverManager.getConnection(infoConnection, user, pwd);
     }
 
+    /**
+     * Méthode pour fermer la connexion à la base de données.
+     */
     @Override
     public void close() {
         try {
@@ -23,6 +42,12 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
         }
     }
 
+    /**
+     * Méthode pour récupérer un menu à partir de son identifiant.
+     * 
+     * @param id L'identifiant du menu à récupérer.
+     * @return Le menu correspondant à l'identifiant spécifié.
+     */
     @Override
     public Menu getMenu(int id) {
 
@@ -54,6 +79,11 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
         return selectedMenu;
     }
 
+    /**
+     * Méthode pour récupérer tous les menus depuis la base de données.
+     * 
+     * @return Une liste contenant tous les menus.
+     */
     @Override
     public ArrayList<Menu> getAllMenu() {
         ArrayList<Menu> listMenu;
@@ -82,6 +112,15 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
         return listMenu;
     }
 
+    /**
+     * Méthode pour mettre à jour un menu existant dans la base de données.
+     * 
+     * @param id          L'identifiant du menu à mettre à jour.
+     * @param author      Le nouvel auteur du menu.
+     * @param description La nouvelle description du menu.
+     * @param prix        Le nouveau prix du menu.
+     * @return true si la mise à jour est réussie, sinon false.
+     */
     @Override
     public boolean updateMenu(int id, String author, String description, double prix) {
 
@@ -103,6 +142,12 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
         }
     }
 
+    /**
+     * Méthode pour supprimer un menu de la base de données.
+     * 
+     * @param id L'identifiant du menu à supprimer.
+     * @return true si la suppression est réussie, sinon false.
+     */
     @Override
     public boolean deleteMenu(int id) {
 
@@ -119,6 +164,12 @@ public class MenuRepositoryMariaDB implements MenuRepositoryInterface {
         }
     }
 
+    /**
+     * Méthode pour créer un nouveau menu dans la base de données.
+     * 
+     * @param menu Le menu à créer.
+     * @return true si la création est réussie, sinon false.
+     */
     public boolean createMenu(Menu menu) {
 
         String query = "INSERT INTO Menu (author, description, entree, plat, dessert) VALUES (?, ?, ?, ?, ?)";

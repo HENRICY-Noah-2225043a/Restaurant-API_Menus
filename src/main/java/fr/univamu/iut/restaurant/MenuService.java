@@ -69,10 +69,8 @@ public class MenuService {
         String result = null;
         Menu myMenu = menuRepo.getMenu(id);
 
-        // Si le menu a été trouvé
         if (myMenu != null) {
 
-            // Création du JSON et conversion du menu
             try (Jsonb jsonb = JsonbBuilder.create()) {
                 result = jsonb.toJson(myMenu);
             } catch (Exception e) {
@@ -104,6 +102,13 @@ public class MenuService {
         return menuRepo.createMenu(menu);
     }
 
+    /**
+     * Méthode permettant de récupérer un plat depuis l'API
+     *
+     * @param id l'identifiant du plat à récupérer
+     * @return le plat récupéré
+     * @throws Exception si le plat n'a pas pu être récupéré
+     */
     public Plat getPlat(int id) throws Exception {
         HttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet(
@@ -124,6 +129,12 @@ public class MenuService {
 
     }
 
+    /**
+     * Méthode permettant de supprimer un menu
+     *
+     * @param id l'identifiant du menu à supprimer
+     * @return true si le menu a pu être supprimé
+     */
     public boolean deleteMenu(int id) {
         return menuRepo.deleteMenu(id);
     }
